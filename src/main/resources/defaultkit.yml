@@ -8,8 +8,8 @@ Command alias: false
 
 # The description of the kit shown in the Kit GUI.
 Description:
-- '&5The default overpowered'
-- '&5amazing kit!'
+  - '&5The default overpowered'
+  - '&5amazing kit!'
 
 # The cost of the kit (if Vault is enabled)
 Cost: 0.0
@@ -30,7 +30,7 @@ Breakable items: true
 # <player> - Automatically replaced with the player's username.
 # <kit> - Automatically replaced with this kit's name.
 Commands:
-- broadcast &4<player> &6has chosen the <kit> kit!
+  - broadcast &4<player> &6has chosen the <kit> kit!
 
 # Commands to run when a player reaches a defined killstreak.
 # Template:
@@ -40,9 +40,9 @@ Commands:
 # - <command3>
 Killstreak commands:
   Killstreak 10:
-  - broadcast &4<player> &6is on a rampage with a 10 killstreak!
+    - broadcast &4<player> &6is on a rampage with a 10 killstreak!
   Killstreak 20:
-  - broadcast &4<player> &6is going beserk with a 20 killstreak!
+    - broadcast &4<player> &6is going beserk with a 20 killstreak!
 
 # Position - The position of the kit GUI item in the GUI. Set to -1 for a random order.
 # Item - The item to show in the Kit GUI that represents this kit.
@@ -62,7 +62,7 @@ Items:
     Type: Iron Sword
     Name: '&r&lDefault &rkit sword'
     Lore:
-    - '&6Slay your enemies!'
+      - '&6Slay your enemies!'
     Enchantments:
       Unbreaking: 3
   Slot 1:

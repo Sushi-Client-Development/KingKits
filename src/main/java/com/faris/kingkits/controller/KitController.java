@@ -13,180 +13,182 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-import java.util.logging.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.logging.Level;
 
 public class KitController implements Controller {
 
-	private static KitController instance = null;
+    private static KitController instance = null;
 
-	private final Map<String, Kit> kitMap;
+    private final Map<String, Kit> kitMap;
 
-	private File kitsFolder = null;
+    private File kitsFolder = null;
 
-	private KitController() {
-		this.kitMap = new LinkedHashMap<>();
-		this.kitsFolder = new File(KingKits.getInstance().getDataFolder(), "kits");
-		FileUtilities.createDirectory(this.kitsFolder);
-	}
+    private KitController() {
+        this.kitMap = new LinkedHashMap<>();
+        this.kitsFolder = new File(KingKits.getInstance().getDataFolder(), "kits");
+        FileUtilities.createDirectory(this.kitsFolder);
+    }
 
-	@Override
-	public void shutdownController() {
-		this.clearKits();
+    @Override
+    public void shutdownController() {
+        this.clearKits();
 
-		instance = null;
-	}
+        instance = null;
+    }
 
-	public boolean addKit(Kit kit) {
-		if (kit != null) {
-			this.kitMap.put(kit.getName(), kit);
-			return true;
-		} else {
-			return false;
-		}
-	}
+    public boolean addKit(Kit kit) {
+        if (kit != null) {
+            this.kitMap.put(kit.getName(), kit);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-	public void clearKits() {
-		this.kitMap.clear();
-	}
+    public void clearKits() {
+        this.kitMap.clear();
+    }
 
-	public void deleteKit(Kit kit) {
-		if (kit != null) {
-			File directKitFile = new File(this.kitsFolder, kit.getName());
-			if (directKitFile.exists()) {
-				FileUtilities.delete(directKitFile);
-			} else {
-				File[] kitFiles = FileUtilities.getFiles(this.kitsFolder);
-				if (kitFiles.length > 0) {
-					for (File kitFile : kitFiles) {
-						if (kitFile.getName().endsWith(".yml")) {
-							FileConfiguration kitConfig = YamlConfiguration.loadConfiguration(kitFile);
-							if (kitConfig.getString("Name", "").equals(kit.getName())) {
-								FileUtilities.delete(kitFile);
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+    public void deleteKit(Kit kit) {
+        if (kit != null) {
+            File directKitFile = new File(this.kitsFolder, kit.getName());
+            if (directKitFile.exists()) {
+                FileUtilities.delete(directKitFile);
+            } else {
+                File[] kitFiles = FileUtilities.getFiles(this.kitsFolder);
+                if (kitFiles.length > 0) {
+                    for (File kitFile : kitFiles) {
+                        if (kitFile.getName().endsWith(".yml")) {
+                            FileConfiguration kitConfig = YamlConfiguration.loadConfiguration(kitFile);
+                            if (kitConfig.getString("Name", "").equals(kit.getName())) {
+                                FileUtilities.delete(kitFile);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	public Kit getKit(String kitName) {
-		return kitName != null ? this.kitMap.get(kitName) : null;
-	}
+    public Kit getKit(String kitName) {
+        return kitName != null ? this.kitMap.get(kitName) : null;
+    }
 
-	public Map<String, Kit> getKits() {
-		return new LinkedHashMap<>(this.kitMap);
-	}
+    public Map<String, Kit> getKits() {
+        return new LinkedHashMap<>(this.kitMap);
+    }
 
-	public void loadKits() {
-		this.clearKits();
+    public void loadKits() {
+        this.clearKits();
 
-		try {
-			FileUtilities.createDirectory(this.kitsFolder);
-			File[] kitsFile = FileUtilities.getFiles(this.kitsFolder);
-			if (kitsFile.length == 0) {
-				kitsFile = new File[]{new File(this.kitsFolder, "Default.yml")};
-				KingKits.getInstance().saveResource("defaultkit.yml", false, kitsFile[0]);
-				if (!kitsFile[0].exists()) kitsFile = new File[0];
-			}
-			if (kitsFile.length > 0) {
-				for (File kitFile : kitsFile) {
-					try {
-						CustomConfiguration kitConfig = CustomConfiguration.loadConfiguration(kitFile);
-						Kit kit = Kit.deserialize(kitConfig.getValues(false));
-						if (kit != null) {
-							KitLoadEvent kitLoadEvent = new KitLoadEvent(kit, kitConfig);
-							Bukkit.getServer().getPluginManager().callEvent(kitLoadEvent);
-							if (kitLoadEvent.getKit() != null) {
-								this.addKit(kitLoadEvent.getKit());
-							}
-						} else {
-							Bukkit.getServer().getLogger().log(Level.WARNING, "Failed to deserialize the kit '" + kitFile.getName() + "' because it is null.");
-						}
-					} catch (Exception ex) {
-						Bukkit.getServer().getLogger().log(Level.WARNING, "Failed to deserialize the kit '" + kitFile.getName() + "'", ex);
-					}
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
+        try {
+            FileUtilities.createDirectory(this.kitsFolder);
+            File[] kitsFile = FileUtilities.getFiles(this.kitsFolder);
+            if (kitsFile.length == 0) {
+                kitsFile = new File[]{new File(this.kitsFolder, "Default.yml")};
+                KingKits.getInstance().saveResource("defaultkit.yml", false, kitsFile[0]);
+                if (!kitsFile[0].exists()) kitsFile = new File[0];
+            }
+            if (kitsFile.length > 0) {
+                for (File kitFile : kitsFile) {
+                    try {
+                        CustomConfiguration kitConfig = CustomConfiguration.loadConfiguration(kitFile);
+                        Kit kit = Kit.deserialize(kitConfig.getValues(false));
+                        if (kit != null) {
+                            KitLoadEvent kitLoadEvent = new KitLoadEvent(kit, kitConfig);
+                            Bukkit.getServer().getPluginManager().callEvent(kitLoadEvent);
+                            if (kitLoadEvent.getKit() != null) {
+                                this.addKit(kitLoadEvent.getKit());
+                            }
+                        } else {
+                            Bukkit.getServer().getLogger().log(Level.WARNING, "Failed to deserialize the kit '" + kitFile.getName() + "' because it is null.");
+                        }
+                    } catch (Exception ex) {
+                        Bukkit.getServer().getLogger().log(Level.WARNING, "Failed to deserialize the kit '" + kitFile.getName() + "'", ex);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
-	public void removeKit(Kit kit) {
-		if (kit != null) this.kitMap.remove(kit.getName());
-	}
+    public void removeKit(Kit kit) {
+        if (kit != null) this.kitMap.remove(kit.getName());
+    }
 
-	public void saveKit(Kit kit) {
-		if (kit != null && !kit.isUserKit()) {
-			FileUtilities.createDirectory(this.kitsFolder);
+    public void saveKit(Kit kit) {
+        if (kit != null && !kit.isUserKit()) {
+            FileUtilities.createDirectory(this.kitsFolder);
 
-			String kitName = kit.getName();
-			Map<String, Object> serializedKit = kit.serialize();
+            String kitName = kit.getName();
+            Map<String, Object> serializedKit = kit.serialize();
 
-			File kitFile = new File(this.kitsFolder, kitName + ".yml");
-			if (kitFile.exists()) FileUtilities.delete(kitFile);
+            File kitFile = new File(this.kitsFolder, kitName + ".yml");
+            if (kitFile.exists()) FileUtilities.delete(kitFile);
 
-			CustomConfiguration configKit = CustomConfiguration.loadConfiguration(kitFile);
-			configKit.setNewLinePerKey(true);
-			for (Map.Entry<String, Object> serializationEntry : serializedKit.entrySet()) {
-				configKit.set(serializationEntry.getKey(), serializationEntry.getValue());
-			}
-			try {
-				configKit.save(kitFile);
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-		}
-	}
+            CustomConfiguration configKit = CustomConfiguration.loadConfiguration(kitFile);
+            configKit.setNewLinePerKey(true);
+            for (Map.Entry<String, Object> serializationEntry : serializedKit.entrySet()) {
+                configKit.set(serializationEntry.getKey(), serializationEntry.getValue());
+            }
+            try {
+                configKit.save(kitFile);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 
-	public void saveKit(Kit kit, UUID playerUUID) {
-		if (kit != null && playerUUID != null && kit.isUserKit()) {
-			KitPlayer kitPlayer = PlayerController.getInstance().getPlayer(playerUUID);
-			if (kitPlayer != null) {
-				kitPlayer.addKit(kit);
-			} else {
-				OfflineKitPlayer offlineKitPlayer = PlayerController.getInstance().getOfflinePlayer(playerUUID);
-				if (offlineKitPlayer != null) {
-					long currentTime = System.currentTimeMillis();
-					while (true) {
-						if (offlineKitPlayer.isLoaded()) break;
-						else if (System.currentTimeMillis() - currentTime > 1_000L) break;
-					}
-					offlineKitPlayer.addKit(kit);
-					PlayerController.getInstance().saveOfflinePlayer(offlineKitPlayer);
-				}
-			}
-		}
-	}
+    public void saveKit(Kit kit, UUID playerUUID) {
+        if (kit != null && playerUUID != null && kit.isUserKit()) {
+            KitPlayer kitPlayer = PlayerController.getInstance().getPlayer(playerUUID);
+            if (kitPlayer != null) {
+                kitPlayer.addKit(kit);
+            } else {
+                OfflineKitPlayer offlineKitPlayer = PlayerController.getInstance().getOfflinePlayer(playerUUID);
+                if (offlineKitPlayer != null) {
+                    long currentTime = System.currentTimeMillis();
+                    while (true) {
+                        if (offlineKitPlayer.isLoaded()) break;
+                        else if (System.currentTimeMillis() - currentTime > 1_000L) break;
+                    }
+                    offlineKitPlayer.addKit(kit);
+                    PlayerController.getInstance().saveOfflinePlayer(offlineKitPlayer);
+                }
+            }
+        }
+    }
 
-	public void saveKit(Kit kit, String path, Object value) throws Exception {
-		if (kit != null && !kit.isUserKit()) {
-			String kitName = kit.getName();
-			File kitFile = new File(this.kitsFolder, kitName + ".yml");
-			if (!kitFile.exists()) {
-				saveKit(kit);
-				return;
-			}
-			CustomConfiguration configKit = CustomConfiguration.loadConfigurationSafely(kitFile, false);
-			configKit.setNewLinePerKey(true);
-			if (configKit.getValues(false).isEmpty()) {
-				Map<String, Object> serializedKit = kit.serialize();
-				for (Map.Entry<String, Object> serializationEntry : serializedKit.entrySet()) {
-					configKit.set(serializationEntry.getKey(), serializationEntry.getValue());
-				}
-			} else {
-				configKit.set(path, value);
-			}
-			configKit.save(kitFile, false);
-		}
-	}
+    public void saveKit(Kit kit, String path, Object value) throws Exception {
+        if (kit != null && !kit.isUserKit()) {
+            String kitName = kit.getName();
+            File kitFile = new File(this.kitsFolder, kitName + ".yml");
+            if (!kitFile.exists()) {
+                saveKit(kit);
+                return;
+            }
+            CustomConfiguration configKit = CustomConfiguration.loadConfigurationSafely(kitFile, false);
+            configKit.setNewLinePerKey(true);
+            if (configKit.getValues(false).isEmpty()) {
+                Map<String, Object> serializedKit = kit.serialize();
+                for (Map.Entry<String, Object> serializationEntry : serializedKit.entrySet()) {
+                    configKit.set(serializationEntry.getKey(), serializationEntry.getValue());
+                }
+            } else {
+                configKit.set(path, value);
+            }
+            configKit.save(kitFile, false);
+        }
+    }
 
-	public static KitController getInstance() {
-		if (instance == null) instance = new KitController();
-		return instance;
-	}
+    public static KitController getInstance() {
+        if (instance == null) instance = new KitController();
+        return instance;
+    }
 
 }

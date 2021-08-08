@@ -5,14 +5,14 @@ import org.bukkit.command.CommandExecutor;
 
 public abstract class KingKitsCommand implements CommandExecutor {
 
-	private KingKits plugin = null;
+    private KingKits plugin = null;
 
-	public KingKitsCommand(KingKits pluginInstance) {
-		this.plugin = pluginInstance;
-	}
+    public KingKitsCommand(KingKits pluginInstance) {
+        this.plugin = pluginInstance;
+    }
 
-	protected KingKits getPlugin() {
-		return this.plugin;
-	}
+    protected KingKits getPlugin() {
+        return this.plugin;
+    }
 
 }

@@ -4,24 +4,24 @@ import com.faris.easysql.mysql.MySQLHandler;
 
 public abstract class StatementBuilder {
 
-	protected final MySQLHandler sqlHandler;
+    protected final MySQLHandler sqlHandler;
 
-	public StatementBuilder(MySQLHandler handler) {
-		this.sqlHandler = handler;
-	}
+    public StatementBuilder(MySQLHandler handler) {
+        this.sqlHandler = handler;
+    }
 
-	public abstract String toSQLString();
+    public abstract String toSQLString();
 
-	protected char getSpecialCharacter() {
-		return '`';
-	}
+    protected char getSpecialCharacter() {
+        return '`';
+    }
 
-	protected String stripSpecialCharacters(String aString) {
-		return aString != null ? aString.replace(String.valueOf(this.getSpecialCharacter()), "") : null;
-	}
+    protected String stripSpecialCharacters(String aString) {
+        return aString != null ? aString.replace(String.valueOf(this.getSpecialCharacter()), "") : null;
+    }
 
-	public static char getTableAndColumnCharacter() {
-		return '`';
-	}
+    public static char getTableAndColumnCharacter() {
+        return '`';
+    }
 
 }

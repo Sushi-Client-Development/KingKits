@@ -7,36 +7,36 @@ import org.bukkit.event.HandlerList;
 
 public class KitLoadEvent extends Event {
 
-	private static HandlerList handlerList = new HandlerList();
+    private static HandlerList handlerList = new HandlerList();
 
-	private Kit kit = null;
-	private CustomConfiguration config = null;
+    private Kit kit = null;
+    private CustomConfiguration config = null;
 
-	public KitLoadEvent(Kit kit, CustomConfiguration config) {
-		super();
-		this.kit = kit;
-		this.config = config;
-	}
+    public KitLoadEvent(Kit kit, CustomConfiguration config) {
+        super();
+        this.kit = kit;
+        this.config = config;
+    }
 
-	public CustomConfiguration getConfig() {
-		return this.config;
-	}
+    public CustomConfiguration getConfig() {
+        return this.config;
+    }
 
-	public Kit getKit() {
-		return this.kit;
-	}
+    public Kit getKit() {
+        return this.kit;
+    }
 
-	public void setKit(Kit kit) {
-		this.kit = kit;
-	}
+    public void setKit(Kit kit) {
+        this.kit = kit;
+    }
 
-	@Override
-	public HandlerList getHandlers() {
-		return handlerList;
-	}
+    @Override
+    public HandlerList getHandlers() {
+        return handlerList;
+    }
 
-	public static HandlerList getHandlerList() {
-		return handlerList;
-	}
+    public static HandlerList getHandlerList() {
+        return handlerList;
+    }
 
 }
