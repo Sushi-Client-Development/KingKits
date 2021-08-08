@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
-import net.amoebaman.util.ArrayWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -225,8 +224,8 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 * @param lines The lines of text which will be displayed to the client upon hovering. The iteration order of this object will be the order in which the lines of the tooltip are created.
 	 * @return This builder instance.
 	 */
-	public FancyMessage tooltip(final Iterable<String> lines) {
-		tooltip(ArrayWrapper.toArray(lines, String.class));
+	public FancyMessage tooltip(final List<String> lines) {
+		tooltip(lines.toArray(new String[0]));
 		return this;
 	}
 
@@ -314,8 +313,8 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 * @param lines The lines of text which will be displayed to the client upon hovering. The iteration order of this object will be the order in which the lines of the tooltip are created.
 	 * @return This builder instance.
 	 */
-	public FancyMessage formattedTooltip(final Iterable<FancyMessage> lines) {
-		return formattedTooltip(ArrayWrapper.toArray(lines, FancyMessage.class));
+	public FancyMessage formattedTooltip(final List<FancyMessage> lines) {
+		return formattedTooltip(lines.toArray(new FancyMessage[0]));
 	}
 
 	/**
@@ -369,8 +368,8 @@ public class FancyMessage implements JsonRepresentedObject, Cloneable, Iterable<
 	 * @param replacements The replacements, in order, that will be used in the language-specific message.
 	 * @return This builder instance.
 	 */
-	public FancyMessage translationReplacements(final Iterable<FancyMessage> replacements) {
-		return translationReplacements(ArrayWrapper.toArray(replacements, FancyMessage.class));
+	public FancyMessage translationReplacements(final List<FancyMessage> replacements) {
+		return translationReplacements(replacements.toArray(new FancyMessage[0]));
 	}
 
 	/**
